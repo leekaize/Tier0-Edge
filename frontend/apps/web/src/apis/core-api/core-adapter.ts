@@ -65,6 +65,8 @@ const routeOverrides: Record<string, string> = {
   'vision.camera.page': '/vision',
   'vision.camera.read': '/vision',
   'vision.camera.manage': '/vision',
+  'hmi-dashboard': '/nodered/screen/ui/',
+  'hmi-screen': '/nodered/screen/',
 };
 
 const codeOverrides: Record<string, string> = {
@@ -173,6 +175,9 @@ const iconOverrides: Record<string, string> = {
   'vision.camera.page': 'VisionCamera',
   'vision.camera.read': 'VisionCamera',
   'vision.camera.manage': 'VisionCamera',
+  hmi: 'menu.tag.appspace',
+  'hmi-dashboard': 'Dashboards',
+  'hmi-screen': 'NodeRed',
 };
 
 const nameOverrides: Record<string, string> = {
@@ -236,6 +241,9 @@ const nameOverrides: Record<string, string> = {
   'vision.camera.page': 'sidebar.vision',
   'vision.camera.read': 'resource.vision.camera.read',
   'vision.camera.manage': 'resource.vision.camera.manage',
+  hmi: 'Dashboard',
+  'hmi-dashboard': 'Dashboard',
+  'hmi-screen': 'Screen Flow',
 };
 
 const menuNameOverrides: Record<string, string> = {
@@ -301,6 +309,8 @@ const parentOverrides: Record<string, string> = {
   'vision.camera.page': 'analysis',
   'vision.camera.read': 'vision.camera.page',
   'vision.camera.manage': 'vision.camera.page',
+  'hmi-dashboard': 'hmi',
+  'hmi-screen': 'hmi',
 };
 
 const sortOverrides: Record<string, number> = {
@@ -349,6 +359,9 @@ const sortOverrides: Record<string, number> = {
   'vision.camera.page': 5,
   'vision.camera.read': 10,
   'vision.camera.manage': 20,
+  hmi: 25,
+  'hmi-dashboard': 10,
+  'hmi-screen': 20,
 };
 
 const menuResourceKeys = new Set([
@@ -372,7 +385,12 @@ const menuResourceKeys = new Set([
   'app',
   'analysis',
   'vision.camera.page',
+  'hmi-dashboard',
+  'hmi-screen',
 ]);
+
+// Gateway-proxied paths rendered as same-origin iframes (urlType=2) instead of SPA routes.
+const externalRouteResourceKeys = new Set(['hmi-dashboard', 'hmi-screen']);
 
 const nonNavigationResourceKeys = new Set([
   'app.management',
@@ -634,7 +652,7 @@ export const coreResourcesForResourceKeys = (keys: string[] = []): CoreResource[
   keys.forEach(addKey);
   return Array.from(keySet).map((key) => {
     const type =
-      key === 'uns' || key === 'flow' || key === 'system' || key === 'app' || key === 'analysis'
+      key === 'uns' || key === 'flow' || key === 'system' || key === 'app' || key === 'analysis' || key === 'hmi'
         ? 1
         : menuResourceKeys.has(key)
           ? 2
@@ -648,6 +666,7 @@ export const coreResourcesForResourceKeys = (keys: string[] = []): CoreResource[
       routePath: routeOverrides[key] || '',
       icon: iconOverrides[key] || '',
       sort: sortOverrides[key] || 0,
+      urlType: externalRouteResourceKeys.has(key) ? 2 : undefined,
       actions: [],
     };
   });
